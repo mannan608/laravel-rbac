@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Services\PermissionService;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
-use App\Services\PermissionService;
 
 class PermissionSeeder extends Seeder
 {
@@ -13,7 +13,7 @@ class PermissionSeeder extends Seeder
         foreach (PermissionService::generatePermissions() as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
-                'guard_name' => 'web'
+                'guard_name' => 'web',
             ]);
         }
     }

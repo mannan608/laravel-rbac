@@ -139,7 +139,8 @@
                                             <input type="checkbox"
                                                    class="rounded border-gray-300 permission-group-{{ $module }}"
                                                    name="permissions[]"
-                                                   value="{{ $permission->name }}">
+                                                   value="{{ $permission->name }}"
+                                                   @checked(in_array($permission->name, old('permissions', [])))>
 
                                             <span class="text-sm text-gray-700">
                                                 {{ $permission->name }}
@@ -180,7 +181,8 @@
                                 <input type="checkbox"
                                        name="roles[]"
                                        value="{{ $role->name }}"
-                                       class="rounded border-gray-300">
+                                       class="rounded border-gray-300"
+                                       @checked(in_array($role->name, old('roles', [])))>
 
                                 <div>
                                     <p class="font-medium text-gray-800">

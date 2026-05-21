@@ -131,7 +131,7 @@
 
                                 <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
 
-                                    {{ $role->users->count() }} Users
+                                    {{ $role->users_count }} Users
 
                                 </span>
 

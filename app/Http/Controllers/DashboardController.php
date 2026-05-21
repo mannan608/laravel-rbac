@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Product;
-use Spatie\Permission\Models\Role;
+use App\Models\User;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
-class DashboardController extends Controller
+class DashboardController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:dashboard.viewAny'),
+        ];
+    }
+
     public function index()
     {
         return view('dashboard.index', [

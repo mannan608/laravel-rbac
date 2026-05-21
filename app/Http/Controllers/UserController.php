@@ -2,17 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Http\Requests\UserRequest;
+use App\Models\User;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:users.viewAny', only: ['index']),
+            new Middleware('permission:users.create', only: ['create', 'store']),
+            new Middleware('permission:users.edit', only: ['edit', 'update']),
+            new Middleware('permission:users.delete', only: ['destroy']),
+        ];
+    }
+
     public function index()
     {
-        $users = User::latest()->paginate(10);
+        $users = User::with('roles')->latest()->paginate(10);
 
         return view('users.index', compact('users'));
     }
@@ -27,14 +39,16 @@ class UserController extends Controller
 
     public function store(UserRequest $request)
     {
+        $validated = $request->validated();
+
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
         ]);
 
-        $user->syncRoles($request->roles);
-        $user->syncPermissions($request->permissions);
+        $user->syncRoles($validated['roles'] ?? []);
+        $user->syncPermissions($validated['permissions'] ?? []);
 
         return redirect()
             ->route('users.index')
@@ -52,19 +66,21 @@ class UserController extends Controller
 
     public function update(UserRequest $request, User $user)
     {
+        $validated = $request->validated();
+
         $data = [
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
         ];
 
-        if ($request->password) {
-            $data['password'] = Hash::make($request->password);
+        if (! empty($validated['password'])) {
+            $data['password'] = Hash::make($validated['password']);
         }
 
         $user->update($data);
 
-        $user->syncRoles($request->roles);
-        $user->syncPermissions($request->permissions);
+        $user->syncRoles($validated['roles'] ?? []);
+        $user->syncPermissions($validated['permissions'] ?? []);
 
         return redirect()
             ->route('users.index')

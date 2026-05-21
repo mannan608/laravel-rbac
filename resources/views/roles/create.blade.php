@@ -12,7 +12,12 @@
 
             <input type="text"
                    name="name"
+                   value="{{ old('name') }}"
                    class="w-full border rounded-lg p-3 mt-2">
+
+            @error('name')
+                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+            @enderror
         </div>
 
         @foreach($permissions as $module => $modulePermissions)
@@ -31,7 +36,8 @@
 
                             <input type="checkbox"
                                    name="permissions[]"
-                                   value="{{ $permission->name }}">
+                                   value="{{ $permission->name }}"
+                                   @checked(in_array($permission->name, old('permissions', [])))>
 
                             {{ $permission->name }}
 

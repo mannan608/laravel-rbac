@@ -15,11 +15,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    Route::resource('roles', RoleController::class);
+    Route::resource('roles', RoleController::class)->except('show');
 
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->except('show');
 
-    Route::resource('products', ProductController::class);
+    Route::resource('products', ProductController::class)->except('show');
 });
 
 require __DIR__.'/auth.php';

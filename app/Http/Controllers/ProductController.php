@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Http\Requests\ProductRequest;
+use App\Models\Product;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ProductController extends Controller
+class ProductController extends Controller implements HasMiddleware
 {
-    public function __construct()
+    public static function middleware(): array
     {
-        $this->middleware('permission:products.viewAny')->only('index');
-        $this->middleware('permission:products.create')->only(['create', 'store']);
-        $this->middleware('permission:products.edit')->only(['edit', 'update']);
-        $this->middleware('permission:products.delete')->only('destroy');
+        return [
+            new Middleware('permission:products.viewAny', only: ['index']),
+            new Middleware('permission:products.create', only: ['create', 'store']),
+            new Middleware('permission:products.edit', only: ['edit', 'update']),
+            new Middleware('permission:products.delete', only: ['destroy']),
+        ];
     }
 
     public function index()

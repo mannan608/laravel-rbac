@@ -3,14 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoleRequest;
-use Spatie\Permission\Models\Role;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
-class RoleController extends Controller
+class RoleController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:roles.viewAny', only: ['index']),
+            new Middleware('permission:roles.create', only: ['create', 'store']),
+            new Middleware('permission:roles.edit', only: ['edit', 'update']),
+            new Middleware('permission:roles.delete', only: ['destroy']),
+        ];
+    }
+
     public function index()
     {
-        $roles = Role::latest()->paginate(10);
+        $roles = Role::with('permissions')->withCount('users')->latest()->paginate(10);
 
         return view('roles.index', compact('roles'));
     }
@@ -26,11 +38,13 @@ class RoleController extends Controller
 
     public function store(RoleRequest $request)
     {
+        $validated = $request->validated();
+
         $role = Role::create([
-            'name' => $request->name
+            'name' => $validated['name'],
         ]);
 
-        $role->syncPermissions($request->permissions);
+        $role->syncPermissions($validated['permissions'] ?? []);
 
         return redirect()
             ->route('roles.index')
@@ -48,11 +62,13 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role)
     {
+        $validated = $request->validated();
+
         $role->update([
-            'name' => $request->name
+            'name' => $validated['name'],
         ]);
 
-        $role->syncPermissions($request->permissions);
+        $role->syncPermissions($validated['permissions'] ?? []);
 
         return redirect()
             ->route('roles.index')
