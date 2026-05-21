@@ -3,6 +3,15 @@
 
 @section('content')
 
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">
+        {{ $canViewAll ? 'Admin Dashboard' : 'My Dashboard' }}
+    </h1>
+
+    <p class="text-gray-500 mt-1">
+        {{ $canViewAll ? 'Showing all application data.' : 'Showing only your own dashboard data.' }}
+    </p>
+</div>
 
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 

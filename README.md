@@ -65,6 +65,13 @@ products.edit
 dashboard.viewAny
 ```
 
+Dashboard permissions are intentionally limited:
+
+```text
+dashboard.viewAny  # admin/global dashboard
+dashboard.view     # own/user dashboard
+```
+
 Controllers use Laravel's static controller middleware API through `Illuminate\Routing\Controllers\HasMiddleware`, which is required for this Laravel version.
 
 ## Breeze

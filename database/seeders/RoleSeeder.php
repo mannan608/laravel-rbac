@@ -18,14 +18,22 @@ class RoleSeeder extends Seeder
         $superAdmin->syncPermissions(Permission::all());
 
         $manager->syncPermissions([
+            'dashboard.view',
             'products.viewAny',
             'products.create',
             'products.edit',
             'products.view',
         ]);
 
+        $editor->syncPermissions([
+            'dashboard.view',
+            'products.view',
+            'products.create',
+            'products.edit',
+        ]);
+
         $viewer->syncPermissions([
-            'products.viewAny',
+            'dashboard.view',
             'products.view',
         ]);
     }

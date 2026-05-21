@@ -15,6 +15,17 @@ class PermissionService
         ];
     }
 
+    public static function modulePermissions(): array
+    {
+        return [
+            'dashboard' => ['viewAny', 'view'],
+            'users' => self::crudPermissions(),
+            'roles' => self::crudPermissions(),
+            'permissions' => self::crudPermissions(),
+            'products' => self::crudPermissions(),
+        ];
+    }
+
     public static function crudPermissions(): array
     {
         return [
@@ -30,8 +41,8 @@ class PermissionService
     {
         $permissions = [];
 
-        foreach (self::modules() as $module) {
-            foreach (self::crudPermissions() as $action) {
+        foreach (self::modulePermissions() as $module => $actions) {
+            foreach ($actions as $action) {
                 $permissions[] = "{$module}.{$action}";
             }
         }

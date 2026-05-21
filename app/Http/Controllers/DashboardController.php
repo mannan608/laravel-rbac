@@ -14,17 +14,21 @@ class DashboardController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:dashboard.viewAny'),
+            new Middleware('permission:dashboard.viewAny|dashboard.view'),
         ];
     }
 
     public function index()
     {
+        $user = request()->user();
+        $canViewAll = $user->can('dashboard.viewAny');
+
         return view('dashboard.index', [
-            'users' => User::count(),
-            'roles' => Role::count(),
-            'permissions' => Permission::count(),
-            'products' => Product::count(),
+            'canViewAll' => $canViewAll,
+            'users' => $canViewAll ? User::count() : 1,
+            'roles' => $canViewAll ? Role::count() : $user->roles()->count(),
+            'permissions' => $canViewAll ? Permission::count() : $user->getAllPermissions()->count(),
+            'products' => $canViewAll ? Product::count() : Product::whereBelongsTo($user)->count(),
         ]);
     }
 }

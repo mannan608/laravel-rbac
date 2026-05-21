@@ -6,12 +6,12 @@
 
     <nav class="p-4 space-y-2">
 
-        @can('dashboard.viewAny')
+        @canany(['dashboard.viewAny', 'dashboard.view'])
         <a href="{{ route('dashboard') }}"
            class="block px-4 py-2 rounded hover:bg-gray-700">
             Dashboard
         </a>
-        @endcan
+        @endcanany
 
         @can('users.viewAny')
         <a href="{{ route('users.index') }}"
